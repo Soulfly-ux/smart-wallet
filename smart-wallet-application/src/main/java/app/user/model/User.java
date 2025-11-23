@@ -1,10 +1,12 @@
 package app.user.model;
 
+import app.subscription.model.Subscription;
 import app.wallet.model.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,16 +59,14 @@ public class User {
     private LocalDateTime updatedOn;
 
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Wallet> wallets;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)//  FetchType.EAGER -> за да върне всички абонаменти за конкретния потребител
+                                                           // mappedBy = "owner" -> това е полето в Subscription класа, където има поле "owner", за да знае Hibernate на кой потребител са тези абонаменти
+
+    private List<Subscription> subscriptions = new ArrayList<>();// ако по някаква причина потребителя няма абонамент, това поле да не връша null, а да връща празен списък
 
 
-
-
-
-
-
-
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    private List<Wallet> wallets = new ArrayList<>();
 
 
 

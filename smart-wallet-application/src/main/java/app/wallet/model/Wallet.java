@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.UUID;
 
 @Entity
@@ -26,15 +27,15 @@ public class Wallet {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private WalletStatus status;
 
     @Column
     private BigDecimal balance;
 
-
-
+    @Column(nullable = false)
+    private Currency currency;// идва от java.util
 
     @Column(name = "created_on")
     private LocalDateTime createdOn;
