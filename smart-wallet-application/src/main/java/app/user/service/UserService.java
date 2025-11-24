@@ -6,7 +6,9 @@ import app.user.model.Role;
 import app.user.model.User;
 import app.user.repository.UserRepository;
 import app.wallet.service.WalletService;
+import app.web.dto.LoginRequest;
 import app.web.dto.RegisterRequest;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,30 @@ public class UserService {
         this.walletService = walletService;
     }
 
+
+
+    public User login(LoginRequest loginRequest) {
+
+        // проверяваме дали има потребител с това потребителско име
+
+        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
+
+        if (optionalUser.isEmpty()) {
+            throw new DomainException("Username or password are invalid.");// добре е тук да не даваме пряка информация кое от двете не е вярно.
+        }
+
+        // проверяваме дали паролата е вярна
+        User user = optionalUser.get();// .get() - връща това което Optional- a пази
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) { // passwordEncoder.matches( чистата парола, енкоднатата парола в базата данни)
+            throw new DomainException("Username or password are invalid.");
+        }
+
+        return user;
+    }
+
+
+
+    @Transactional
     public User register(RegisterRequest registerRequest) {
 
         Optional<User> userOptional = userRepository.findByUsername(registerRequest.getUsername());
@@ -74,4 +100,10 @@ public class UserService {
                 .updatedOn(LocalDateTime.now())
                 .build();
     }
+
+
+
+
+
+
 }
