@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -77,7 +79,7 @@ public class UserService {
         subscriptionService.createDefaultSubscription(user);
 
         //
-        log.info("User [%s] created.", user.getUsername());
+        log.info("User {} created.", user.getUsername());
         return user;
     }
 
@@ -102,8 +104,7 @@ public class UserService {
     }
 
 
-
-
-
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
