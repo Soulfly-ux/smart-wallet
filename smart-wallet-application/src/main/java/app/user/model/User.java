@@ -61,11 +61,12 @@ public class User {
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)//  FetchType.EAGER -> за да върне всички абонаменти за конкретния потребител
                                                            // mappedBy = "owner" -> това е полето в Subscription класа, където има поле "owner", за да знае Hibernate на кой потребител са тези абонаменти
-
+    @OrderBy("createdOn DESC")// правим това, че на нулев индекс да е абонамент, който е най-нов
     private List<Subscription> subscriptions = new ArrayList<>();// ако по някаква причина потребителя няма абонамент, това поле да не връша null, а да връща празен списък
 
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @OrderBy("createdOn ASC")// дава на нулев индекса абонамент, който е най-стар- първият портфейл
     private List<Wallet> wallets = new ArrayList<>();
 
 

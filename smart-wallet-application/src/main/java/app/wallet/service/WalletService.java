@@ -78,7 +78,7 @@ public class WalletService {
                 null);
     }
 
-    private Wallet findWalletById(UUID walletId) {
+    public Wallet findWalletById(UUID walletId) {
         return walletRepository.findById(walletId).orElseThrow(() -> new DomainException("Wallet with id [%s]not found".formatted(walletId)));
     }
 

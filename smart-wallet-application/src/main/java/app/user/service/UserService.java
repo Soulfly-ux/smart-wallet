@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -106,5 +107,9 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User getUserById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] not found".formatted(id)));
     }
 }
