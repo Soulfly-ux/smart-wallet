@@ -16,6 +16,7 @@ import java.util.UUID;
 public class IndexController {
     private final UserService userService;
     private final WalletService walletService;
+
     @Autowired
     public IndexController(UserService userService, WalletService walletService) {
         this.userService = userService;
@@ -32,18 +33,18 @@ public class IndexController {
 //    return modelAndView;
 //  }
 
-  // втори вариант(по- подходящ) без ModelAndView:
-  @GetMapping("/")
-  public String getIndex() {
+    // втори вариант(по- подходящ) без ModelAndView:
+    @GetMapping("/")
+    public String getIndex() {
 
 
-      return "index";
-  }
+        return "index";
+    }
 
     @GetMapping("/login")
     public String getLoginPage() {
 
-      return "login";
+        return "login";
     }
 
     @GetMapping("/register")
@@ -54,12 +55,11 @@ public class IndexController {
 
     @GetMapping("/home")
     public ModelAndView getHomePage() {
-      //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
+        //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
         // за това ни трябва ModelAndView, а не просто да показвам view:
 
-       User userById = userService.getUserById(UUID.fromString("f6850b76-3848-40e2-97eb-f4a85c0f5452"));//копираме това id от базата
-                                                                                     // , за момента нямаме сесии и не знаем кой потребител се е логнал
-
+        User userById = userService.getUserById(UUID.fromString("f6850b76-3848-40e2-97eb-f4a85c0f5452"));//копираме това id от базата
+        // , за момента нямаме сесии и не знаем кой потребител се е логнал
 
 
         ModelAndView modelAndView = new ModelAndView();

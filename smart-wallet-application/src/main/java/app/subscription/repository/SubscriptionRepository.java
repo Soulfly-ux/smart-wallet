@@ -1,4 +1,4 @@
-package app.subscription.repositority;
+package app.subscription.repository;
 
 import app.subscription.model.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;

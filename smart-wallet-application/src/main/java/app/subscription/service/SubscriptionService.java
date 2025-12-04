@@ -4,7 +4,7 @@ import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionPeriod;
 import app.subscription.model.SubscriptionStatus;
 import app.subscription.model.SubscriptionType;
-import app.subscription.repositority.SubscriptionRepository;
+import app.subscription.repository.SubscriptionRepository;
 import app.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -47,5 +48,10 @@ public class SubscriptionService {
                 .createdOn(now)
                 .completedOn(now.plusMonths(1))
                 .build();
+    }
+
+    public List<Subscription> getSubscriptions() {
+
+        return subscriptionRepository.findAll();
     }
 }
