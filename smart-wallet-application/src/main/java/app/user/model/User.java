@@ -67,6 +67,7 @@ public class User {
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @OrderBy("createdOn ASC")// дава на нулев индекса абонамент, който е най-стар- първият портфейл
+
     private List<Wallet> wallets = new ArrayList<>();
 
 

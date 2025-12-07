@@ -111,16 +111,18 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="subscription : ${subscriptions}">
+        <tr th:each="subscription : ${user.subscriptions}">
           <td th:text="${subscription.id}"></td>
           <td>
             <p th:text="${subscription.type}"></p>
           </td>
           <td>
-            <p th:text="${subscription.status}" class="status active">ACTIVE</p>
+            <p th:if="${subscription.status.name() == 'ACTIVE'}" class="status active">ACTIVE</p>
+            <p th:if="${subscription.status.name() == 'COMPLETED'}" class="status completed">COMPLETED</p>
+            <p th:if="${subscription.status.name() == 'TERMINATED'}" class="status terminated">TERMINATED</p>
           </td>
           <td th:text="${#strings.capitalize(#strings.toLowerCase(subscription.period))}"></td>
-          <td th:text="${subscription.price}"></td>
+          <td th:text="${subscription.price + ' EUR'}"></td>
           <td th:text="${#temporals.format(subscription.createdOn, 'dd MMM YYYY')}">11 Dec 2024</td>
           <td th:text="${#temporals.format(subscription.completedOn, 'dd MMM YYYY ')}">11 Jan 2025</td>
         </tr>

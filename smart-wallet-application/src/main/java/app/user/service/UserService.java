@@ -88,7 +88,7 @@ public class UserService {
 
 
 
-    private User initializeUser(RegisterRequest registerRequest) {
+    public User initializeUser(RegisterRequest registerRequest) {
         // връща нов билднат потребител.билдваме това, което ще ни трябва при създаването на потребител, после можем да го променяме
 
         // трябва да енкриптнем паролата, за да не бъде видима в базата данни
