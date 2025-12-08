@@ -5,9 +5,12 @@ import app.user.service.UserService;
 import app.wallet.model.Wallet;
 import app.wallet.service.WalletService;
 import app.web.dto.LoginRequest;
+import app.web.dto.RegisterRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
@@ -48,9 +51,26 @@ public class IndexController {
     }
 
     @GetMapping("/register")
-    public String getRegisterPage() {
+    public ModelAndView getRegisterPage() {
+        ModelAndView modelAndView = new ModelAndView();
+        // когато искам да заредя страницата за регистрация, освен да подам празна страница трябва да съм сигурен, че съм подал празно DTO
+        // и за това правим:
 
-        return "register";
+        modelAndView.addObject("registerRequest", new RegisterRequest());
+        modelAndView.setViewName("register");
+        return modelAndView;
+
+    }
+    @PostMapping("/register")
+    public ModelAndView register(@Valid  RegisterRequest registerRequest) {
+        User registeredUser = userService.register(registerRequest);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("registerRequest", registeredUser);
+        modelAndView.setViewName("login");
+
+
+       return modelAndView;
     }
 
     @GetMapping("/home")
