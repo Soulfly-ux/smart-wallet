@@ -9,6 +9,7 @@ import app.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,15 +63,19 @@ public class IndexController {
 
     }
     @PostMapping("/register")
-    public ModelAndView register(@Valid  RegisterRequest registerRequest) {
+    public ModelAndView register(@Valid  RegisterRequest registerRequest, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            return new ModelAndView("register"); // ако има грешки, ще се връща на страницата за регистрация
+        }
+
         User registeredUser = userService.register(registerRequest);
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.addObject("registerRequest", registeredUser);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("registerRequest", registeredUser);
-        modelAndView.setViewName("login");
 
-
-       return modelAndView;
+       return new ModelAndView("redirect:/home");
     }
 
     @GetMapping("/home")

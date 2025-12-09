@@ -29,9 +29,11 @@
 
       <label for="username">Username</label>
       <input type="text" placeholder="Username" id="username" th:field="*{username}" required>
+        <p class="alert-warning" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
 
       <label for="password">Password</label>
       <input type="password" placeholder="Password" id="password" th:field="*{password}" required>
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
 
       <label for="country">Country</label>
       <select id="country" th:field="*{country}" >
@@ -44,6 +46,6 @@
 
   </section>
 </main>
-<div class="footer"><p>© 2025 Smart Wallet. All rights reserved.</p></div>
+<th:block th:insert="fragments/footer :: footer"></th:block>
 </body>
 </html>
