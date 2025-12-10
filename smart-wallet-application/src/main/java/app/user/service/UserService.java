@@ -6,6 +6,7 @@ import app.user.model.Role;
 import app.user.model.User;
 import app.user.repository.UserRepository;
 import app.wallet.service.WalletService;
+import app.web.dto.EditProfileRequest;
 import app.web.dto.LoginRequest;
 import app.web.dto.RegisterRequest;
 import jakarta.transaction.Transactional;
@@ -104,6 +105,18 @@ public class UserService {
                 .build();
     }
 
+    public void editUserDetails(UUID id, EditProfileRequest editProfileRequest) {
+        User userById = getUserById(id);
+
+
+     userById.setFirstName(editProfileRequest.getFirstName());
+     userById.setLastName(editProfileRequest.getLastName());
+     userById.setEmail(editProfileRequest.getEmail());
+     userById.setProfilePicture(editProfileRequest.getProfilePictureUrl());
+
+       userRepository.save(userById);
+    }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -112,4 +125,7 @@ public class UserService {
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] not found".formatted(id)));
     }
+
+
+
 }

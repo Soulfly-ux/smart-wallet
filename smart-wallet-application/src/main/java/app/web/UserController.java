@@ -2,10 +2,15 @@ package app.web;
 
 import app.user.model.User;
 import app.user.service.UserService;
+import app.web.dto.EditProfileRequest;
+import app.web.dto.mapper.DtoMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,10 +34,33 @@ public class UserController {
 
         User userById = userService.getUserById(id);
 
-        modelAndView.addObject("user", userById );
         modelAndView.setViewName("profile-menu");
+        modelAndView.addObject("user", userById );// трябва ни user-a, който прави промените в профила си
+        modelAndView.addObject("editProfile", DtoMapper.mapUserToEditProfileRequest(userById));
+
+
 
         return modelAndView;
+    }
+
+
+    @PutMapping("/{id}/profile")
+    public ModelAndView editUser(@PathVariable UUID id,@Valid EditProfileRequest editProfileRequest, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            User userById = userService.getUserById(id);
+
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("profile-menu");
+            modelAndView.addObject("user", userById );// ако не добавим user, ще хвърли грешка, зашото в този html е използвано user, освен editProfileRequest
+            modelAndView.addObject("editProfile", editProfileRequest);
+            return modelAndView;
+        }
+
+
+            userService.editUserDetails(id, editProfileRequest);
+
+        return new ModelAndView("redirect:/home") ;
     }
 }
 

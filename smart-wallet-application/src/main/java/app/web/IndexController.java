@@ -46,9 +46,31 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public String getLoginPage() {
+    public ModelAndView getLoginPage() {
 
-        return "login";
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        modelAndView.addObject("loginRequest", new LoginRequest());
+
+        return modelAndView;
+    }
+
+    @PostMapping("/login")
+    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("login");
+        }
+
+        User logedUser = userService.login(loginRequest);
+        // знаем, че на home се реферира към user(има атрибути на този user), който е влязъл на  тази страница, за това правим:
+       // ако не го направим ще хвърли грешка, защото не може да парсне данните
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("user", logedUser);
+        modelAndView.setViewName("redirect:home");
+
+
+        return modelAndView;
     }
 
     @GetMapping("/register")
@@ -83,7 +105,7 @@ public class IndexController {
         //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
         // за това ни трябва ModelAndView, а не просто да показвам view:
 
-        User userById = userService.getUserById(UUID.fromString("f6850b76-3848-40e2-97eb-f4a85c0f5452"));//копираме това id от базата
+        User userById = userService.getUserById(UUID.fromString("887aac7b-c413-411b-8a81-a3df53500ab0"));//копираме това id от базата
         // , за момента нямаме сесии и не знаем кой потребител се е логнал
 
 

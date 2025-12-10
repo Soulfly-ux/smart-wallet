@@ -9,6 +9,7 @@ import app.user.model.User;
 import app.wallet.model.Wallet;
 import app.wallet.model.WalletStatus;
 import app.wallet.repository.WalletRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,49 @@ public class WalletService {
                 TransactionStatus.SUCCEEDED,
                 transactioDescription,
                 null);
+
+    }
+    @Transactional
+    public Transaction charge(User user,UUID walletId, BigDecimal amount, String description) {
+
+        Wallet wallet = findWalletById(walletId);// от този портфейл ще се намалят парите-> charge(такса)
+
+
+        boolean isFailedTransaction = false;
+        String failureReason = null;
+        if(wallet.getStatus() == WalletStatus.INACTIVE) {
+            // при тази валидация не хвърляма грешка, а правим тази транзакция като FAILED
+             failureReason = "Inactive wallet";
+            isFailedTransaction = true;
+
+        }
+
+
+        if(wallet.getBalance().compareTo(amount) < 0) {// по този начин се сравняват два BigDecimal ако е true баланса е по-малък от amount
+            failureReason = "No enough money";
+            isFailedTransaction = true;
+        }
+
+        if (isFailedTransaction) { // ако някоя от горните проверки е true, то транзакцията е фейлва(isFailedTransaction вече е true)
+
+            return transactionService.createTransaction(user, walletId.toString(),
+                    SMART_WALLET_LTD, // кой взима парите
+                    amount,
+                    wallet.getBalance(),
+                    wallet.getCurrency(),
+                    TransactionType.WITHDRAWAL, // тип на транзакцията
+                    TransactionStatus.FAILED,
+                    description,
+                    failureReason);//правим такава транзакция , когато статуса е неактивен и не променяме баланса
+
+        }
+        // ако двете проверки са false, то транзакцията е успешна и променяме баланса
+        wallet.setBalance(wallet.getBalance().subtract(amount));// взимам досегашния баланс и изваждам пари( amount - параметър на метода transferMoney)
+        wallet.setUpdatedOn(LocalDateTime.now());
+
+        walletRepository.save(wallet); // съхранявам новия портфейл в с променени полета баланс и датата на актуализацията
+
+       return transactionService.createTransaction(user, walletId.toString(),SMART_WALLET_LTD,amount,wallet.getBalance(),wallet.getCurrency(),TransactionType.WITHDRAWAL,TransactionStatus.SUCCEEDED,description,null);
     }
 
     public Wallet findWalletById(UUID walletId) {
