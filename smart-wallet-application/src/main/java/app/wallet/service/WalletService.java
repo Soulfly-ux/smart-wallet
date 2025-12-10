@@ -9,7 +9,9 @@ import app.user.model.User;
 import app.wallet.model.Wallet;
 import app.wallet.model.WalletStatus;
 import app.wallet.repository.WalletRepository;
+import app.web.dto.TransferRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,36 @@ public class WalletService {
                 TransactionStatus.SUCCEEDED,
                 transactioDescription,
                 null);
+
+    }
+
+
+    public Transaction transferFunds(User sender, TransferRequest transferRequest) {
+       // трябва да изпълня transferRequest-а за този потребител- userById:
+        // 1. взимаме портфейла по UUID от който потребителя ще си изпраща парите:
+        Wallet senderWallet = findWalletById(transferRequest.getFromWalletId()); // взимам портфейлът по UUID (първото поле на TransferRequest)
+
+        // 2. взимаме портфейла(трябва да е активен) по UUID на потребителя който ще получава парите (второто поле на TransferRequest):
+
+        Optional<Wallet> receiverWallet = walletRepository.findAllByOwnerUsername(transferRequest.getToUsername())  // взимам портфейлът по username-> връща списък, трябва да си взема един от тях
+                .stream()
+                .filter(wallet -> wallet.getStatus() == WalletStatus.ACTIVE)
+                .findFirst();
+
+        // Ако няма активен портфейл, то създавам  транзакция със статус FAILED:
+        if (receiverWallet.isEmpty()) {
+            return transactionService.createTransaction(sender,
+                                                    senderWallet.getId().toString(),transferRequest.getToUsername(),
+                    transferRequest.getAmount(),
+                    senderWallet.getBalance(),
+                    senderWallet.getCurrency(),
+                    TransactionType.WITHDRAWAL, // тип на транзакцията
+                    TransactionStatus.FAILED,
+                    "Inactive wallet",
+                    null);
+        }
+
+        return null;
 
     }
     @Transactional
