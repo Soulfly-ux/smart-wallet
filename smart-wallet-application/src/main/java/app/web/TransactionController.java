@@ -29,7 +29,7 @@ public class TransactionController {
     @GetMapping()
     public ModelAndView getTransactionPage() {
 
-        List<Transaction> allByOwnerId = transactionService.getAllByOwnerId(UUID.fromString("f6850b76-3848-40e2-97eb-f4a85c0f5452"));
+        List<Transaction> allByOwnerId = transactionService.getAllByOwnerId(UUID.fromString("887aac7b-c413-411b-8a81-a3df53500ab0"));
 
 
         ModelAndView modelAndView = new ModelAndView();
@@ -41,8 +41,14 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}") // връща транзакция за конкретно id
-    public  ModelAndView getTransactionById(@PathVariable("id") UUID id) {
+    public  ModelAndView getTransactionById(@PathVariable UUID id) {
 
-        return null;
+        Transaction transactionById = transactionService.getTransactionById(id);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("transaction-result");
+        modelAndView.addObject("transaction", transactionById);
+
+        return modelAndView;
     }
 }

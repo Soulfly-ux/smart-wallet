@@ -1,5 +1,6 @@
 package app.transaction.service;
 
+import app.exceptions.DomainException;
 import app.transaction.model.Transaction;
 import app.transaction.model.TransactionStatus;
 import app.transaction.model.TransactionType;
@@ -45,5 +46,10 @@ public class TransactionService {
 
     public List<Transaction> getAllByOwnerId(UUID ownerId) {
       return   transactionRepository.findAllByOwnerIdOrderByCreatedOnDesc(ownerId);
+    }
+
+    public Transaction getTransactionById(UUID id) {
+
+        return transactionRepository.findById(id).orElseThrow(() -> new DomainException("Transaction not found"));
     }
 }

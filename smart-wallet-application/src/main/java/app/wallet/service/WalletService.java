@@ -95,20 +95,55 @@ public class WalletService {
                 .filter(wallet -> wallet.getStatus() == WalletStatus.ACTIVE)
                 .findFirst();
 
+        String transferDescription = "Transfer from %s to %s for %.2f EUR".formatted(sender.getUsername(), transferRequest.getToUsername(), transferRequest.getAmount());
+
         // Ако няма активен портфейл, то създавам  транзакция със статус FAILED:
         if (receiverWallet.isEmpty()) {
             return transactionService.createTransaction(sender,
-                                                    senderWallet.getId().toString(),transferRequest.getToUsername(),
+                                                    senderWallet.getId().toString(),
+                    transferRequest.getToUsername(),
                     transferRequest.getAmount(),
                     senderWallet.getBalance(),
                     senderWallet.getCurrency(),
                     TransactionType.WITHDRAWAL, // тип на транзакцията
                     TransactionStatus.FAILED,
                     "Inactive wallet",
-                    null);
+                    "Invalid criteria for transfer ");// пишем това, защото не искаме да издаваме инфо, дали има потребител и т.н
+        }
+        //Минали сме проверката дали има такъв портфейл , ако мине следователно има
+        //Money Transfer
+        // Ivan-> Gosho |20 EUR парите на Ижан ги намалявам в метода charge
+        // Ivan - 20 EUR, Gosho + 20
+
+
+
+        Transaction withdrawal = charge(sender, senderWallet.getId(), transferRequest.getAmount(), transferDescription);
+        if (withdrawal.getTransactionStatus() == TransactionStatus.FAILED) { // цялата логика за един портфейл,  дали  транзакциаята е failed проверяваме в метода charge
+            return withdrawal;
         }
 
-        return null;
+        Wallet activeReceiverWallet = receiverWallet.get();
+        activeReceiverWallet.setBalance(activeReceiverWallet.getBalance().add(transferRequest.getAmount()));// увеличавам баланa (Gosho + 20 EUR)на този който получава парите
+        activeReceiverWallet.setUpdatedOn(LocalDateTime.now());
+
+        walletRepository.save(activeReceiverWallet);
+        // в долния метод създаваме транзакция на този който изпраща парите
+         //на тук на този който ги получава:
+
+        transactionService.createTransaction(
+                receiverWallet.get().getOwner(),
+                senderWallet.getId().toString(),
+                receiverWallet.get().getId().toString(),
+                transferRequest.getAmount(),
+                receiverWallet.get().getBalance(),
+                receiverWallet.get().getCurrency(),
+                TransactionType.DEPOSIT,
+                TransactionStatus.SUCCEEDED,
+                transferDescription,
+                null
+        );
+
+                  return withdrawal;
 
     }
     @Transactional
