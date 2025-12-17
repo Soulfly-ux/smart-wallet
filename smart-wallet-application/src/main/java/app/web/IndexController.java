@@ -6,10 +6,14 @@ import app.wallet.model.Wallet;
 import app.wallet.service.WalletService;
 import app.web.dto.LoginRequest;
 import app.web.dto.RegisterRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,13 +60,17 @@ public class IndexController {
     }
 
     @PostMapping("/login")
-    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult) {
+    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
             return new ModelAndView("login");
         }
 
         User logedUser = userService.login(loginRequest);
+        response.addCookie(new Cookie("user_id", logedUser.getId().toString()));// взимам id на потребителя и го запазвам в куки и го пращам на клиента
+
+
+
         // знаем, че на home се реферира към user(има атрибути на този user), който е влязъл на  тази страница, за това правим:
        // ако не го направим ще хвърли грешка, защото не може да парсне данните
         ModelAndView modelAndView = new ModelAndView();
@@ -101,11 +109,11 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public ModelAndView getHomePage() {
+    public ModelAndView getHomePage(@CookieValue("user_id") String userId) {
         //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
         // за това ни трябва ModelAndView, а не просто да показвам view:
 
-        User userById = userService.getUserById(UUID.fromString("887aac7b-c413-411b-8a81-a3df53500ab0"));//копираме това id от базата
+        User userById = userService.getUserById(UUID.fromString(userId));//копираме това id от базата
         // , за момента нямаме сесии и не знаем кой потребител се е логнал
 
 

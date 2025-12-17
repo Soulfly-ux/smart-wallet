@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +30,8 @@ public class TransferController {
     }
 
     @GetMapping
-    public ModelAndView getTransferPage() {
-        User userById = userService.getUserById(UUID.fromString("887aac7b-c413-411b-8a81-a3df53500ab0"));
+    public ModelAndView getTransferPage(@CookieValue("user_id") String userId) {
+        User userById = userService.getUserById(UUID.fromString(userId));
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");
@@ -41,7 +42,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult) {
+    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult,@CookieValue("user_id") String userId) {
 
 
 //        1.Потребителя изпраща POST заявка за трансфериране на пари
@@ -49,7 +50,7 @@ public class TransferController {
 //          3.Ако заявката е невалидна, връща се на страницата за трансфериране с грешки
 //          4.Ако заявката е валидна, се изпълнява трансферирането на пари
 //          5.Връща се на страницата за КОНКРЕТНАТА транзакция - за това ни трябва id на транзакцията
-        User userById = userService.getUserById(UUID.fromString("887aac7b-c413-411b-8a81-a3df53500ab0"));
+        User userById = userService.getUserById(UUID.fromString(userId));
         if (bindingResult.hasErrors()) {
 
 
