@@ -134,5 +134,12 @@ public class IndexController {
         return modelAndView;
     }
 
+    @GetMapping("/logout")
+    public String getLogoutPage(HttpSession session) { // взимаме си сесията за да знаем кой се логаутва
+
+        session.invalidate();
+        return "redirect:/";
+    }
+
 
 }
