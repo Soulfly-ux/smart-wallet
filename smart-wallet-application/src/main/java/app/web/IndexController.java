@@ -9,6 +9,7 @@ import app.web.dto.RegisterRequest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,16 +59,23 @@ public class IndexController {
 
         return modelAndView;
     }
-
+    //HttpSession -> създава нова сесия за тази заявка (ако не съществува), тази сесия се генерира в момента в който, тя е autowired в параметрите на метода
     @PostMapping("/login")
-    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult, HttpServletResponse response) {
+    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult, HttpSession session) {
 
         if (bindingResult.hasErrors()) {
             return new ModelAndView("login");
         }
 
         User logedUser = userService.login(loginRequest);
-        response.addCookie(new Cookie("user_id", logedUser.getId().toString()));// взимам id на потребителя и го запазвам в куки и го пращам на клиента
+        session.setAttribute("user_id", logedUser.getId());
+        // можем да добавим колкото искаме атрибути на тази сесия (но обикновенно е достатъчно да добавим само id на потребителя), НИКОГА НЕ СЛАГАМЕ ДИРЕКТНО USER ОБЕКТА:
+        session.setAttribute("username", logedUser.getUsername());
+
+
+
+        // това е ако изпозваме куки(HttpResponse response) вместо сесия(HttpSession session)
+       // response.addCookie(new Cookie("user_id", logedUser.getId().toString()));// взимам id на потребителя и го запазвам в куки и го пращам на клиента
 
 
 
@@ -109,12 +117,12 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public ModelAndView getHomePage(@CookieValue("user_id") String userId) {
+    public ModelAndView getHomePage(HttpSession session) {
         //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
         // за това ни трябва ModelAndView, а не просто да показвам view:
 
-        User userById = userService.getUserById(UUID.fromString(userId));//копираме това id от базата
-        // , за момента нямаме сесии и не знаем кой потребител се е логнал
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User userById = userService.getUserById(userId);
 
 
         ModelAndView modelAndView = new ModelAndView();
