@@ -4,6 +4,7 @@ import app.subscription.model.Subscription;
 import app.subscription.service.SubscriptionService;
 import app.user.model.User;
 import app.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +34,10 @@ public class SubscriptionController {
         return "upgrade";
     }
     @GetMapping("/history")
-    public ModelAndView getHistoryPage() {
+    public ModelAndView getHistoryPage(HttpSession session) {
 
-
-        User userById = userService.getUserById(UUID.fromString("f6850b76-3848-40e2-97eb-f4a85c0f5452"));
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User userById = userService.getUserById(userId);
 
         ModelAndView modelAndView = new ModelAndView();
 //

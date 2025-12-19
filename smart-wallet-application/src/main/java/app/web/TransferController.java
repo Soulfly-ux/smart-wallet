@@ -5,6 +5,7 @@ import app.user.model.User;
 import app.user.service.UserService;
 import app.wallet.service.WalletService;
 import app.web.dto.TransferRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,8 +31,11 @@ public class TransferController {
     }
 
     @GetMapping
-    public ModelAndView getTransferPage(@CookieValue("user_id") String userId) {
-        User userById = userService.getUserById(UUID.fromString(userId));
+    public ModelAndView getTransferPage(HttpSession session) {
+
+
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User userById = userService.getUserById(userId);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");
@@ -42,7 +46,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult,@CookieValue("user_id") String userId) {
+    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult,HttpSession session) {
 
 
 //        1.Потребителя изпраща POST заявка за трансфериране на пари
@@ -50,7 +54,9 @@ public class TransferController {
 //          3.Ако заявката е невалидна, връща се на страницата за трансфериране с грешки
 //          4.Ако заявката е валидна, се изпълнява трансферирането на пари
 //          5.Връща се на страницата за КОНКРЕТНАТА транзакция - за това ни трябва id на транзакцията
-        User userById = userService.getUserById(UUID.fromString(userId));
+
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User userById = userService.getUserById(userId);
         if (bindingResult.hasErrors()) {
 
 
