@@ -127,5 +127,36 @@ public class UserService {
     }
 
 
+    public void switchStatus(UUID id) {
 
+        User userById = getUserById(id);
+
+        // първи начин по -опростен
+//        if(userById.isActive()){
+//            userById.setActive(false);
+//        }else{
+//            userById.setActive(true);
+//        }
+
+        // втори начин(ако е активен направи го да е неактивен )
+        userById.setActive(!userById.isActive()); // така може само ако променливата е boolean
+
+
+
+        userRepository.save(userById);
+    }
+
+
+    public void switchRole(UUID id) {
+
+        User userById = getUserById(id);
+
+        if (userById.getRole() == Role.USER) {
+            userById.setRole(Role.ADMIN);
+        }else {
+            userById.setRole(Role.USER);
+        }
+
+        userRepository.save(userById);
+    }
 }

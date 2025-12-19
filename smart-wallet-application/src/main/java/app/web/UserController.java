@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -25,6 +26,17 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ModelAndView getAllUsers() {
+
+        List<User> allUsers = userService.getAllUsers();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("users");
+        modelAndView.addObject("users", allUsers );
+        return modelAndView;
     }
 
 
@@ -61,6 +73,17 @@ public class UserController {
             userService.editUserDetails(id, editProfileRequest);
 
         return new ModelAndView("redirect:/home") ;
+    }
+
+    @PutMapping("/{id}/status")
+    public String updateUserStatus(@PathVariable UUID id, BindingResult bindingResult) {
+
+
+
+
+        userService.switchStatus(id);
+
+        return "redirect:/users" ;
     }
 }
 

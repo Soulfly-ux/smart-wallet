@@ -113,7 +113,7 @@ public class IndexController {
 //        modelAndView.addObject("registerRequest", registeredUser);
 
 
-       return new ModelAndView("redirect:/home");
+       return new ModelAndView("redirect:/login");
     }
 
     @GetMapping("/home")
