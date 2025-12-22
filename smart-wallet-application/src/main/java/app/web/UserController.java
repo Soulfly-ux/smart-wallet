@@ -1,5 +1,6 @@
 package app.web;
 
+import app.security.RequireAdminRole;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.EditProfileRequest;
@@ -28,6 +29,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @RequireAdminRole // анотация, която ние сме направили в security пакета
     @GetMapping
     public ModelAndView getAllUsers() {
 
@@ -76,12 +78,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}/status")
-    public String updateUserStatus(@PathVariable UUID id, BindingResult bindingResult) {
-
-
-
+    public String switchUserStatus(@PathVariable UUID id) {
 
         userService.switchStatus(id);
+
+        return "redirect:/users" ;
+    }
+
+
+    @PutMapping("/{id}/role")
+    public String switchUserRole(@PathVariable UUID id) {
+
+        userService.switchRole(id);
 
         return "redirect:/users" ;
     }

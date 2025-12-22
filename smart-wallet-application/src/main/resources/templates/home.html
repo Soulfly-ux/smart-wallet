@@ -69,15 +69,15 @@
             </svg>
           </a>
         </div>
-        <div class="func-block admin-func-block">
+        <div class="func-block admin-func-block" th:if="${user.role.name() == 'ADMIN'}">
           <span>Admin</span>
-          <a href="/users">
+          <a th:href="@{/users}">
             <p>Users</p>
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
               <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01"></path>
             </svg>
           </a>
-          <a href="/reports">
+          <a th:href="@{/reports}">
             <p>Reports</p>
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
               <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 6h.01M12 12h.01M12 18h.01"></path>
@@ -103,7 +103,7 @@
         <h2 th:text="${user.username}" class="profile-name"></h2>
         <div class="profile-status-role-container">
           <p th:if="${user.isActive() == true}" class="active-profile">ACTIVE</p>
-          <p th:if="${user.isActive() == false}"  class="active-profile">INACTIVE</p>
+          <p th:if="${user.isActive() == false}"  class="inactive-profile">INACTIVE</p>
         </div>
         <div class="details-section">
           <div class="details-section-container">

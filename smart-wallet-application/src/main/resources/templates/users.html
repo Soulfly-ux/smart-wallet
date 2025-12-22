@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:тh="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,7 @@
   <link rel="stylesheet" type="text/css" href="/css/home-common.css">
   <link rel="stylesheet" type="text/css" href="/css/home.css">
   <link rel="stylesheet" type="text/css" href="/css/subscription-history.css">
-  <title>Transactions</title>
+  <title>Users</title>
 </head>
 <body>
 <nav>
@@ -150,7 +150,7 @@
           </td>
           <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy HH:mm')}"></td>
           <td>
-            <form action="/users/4531a4c8-87d0-4e47-a42a-532ec4e85451/status">
+            <form th:action="@{/users/{id}/status(id=${user.id})}" th:method="PUT">
               <button class="profile-actions-button">
                 <p>Switch</p>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
@@ -161,7 +161,7 @@
             </form>
           </td>
           <td>
-            <form action="">
+            <form th:action="@{users/{id}/role(id=${user.id})}" th:method="PUT" >
               <button class="profile-actions-button">
                 <p>Change</p>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
