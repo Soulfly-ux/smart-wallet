@@ -4,6 +4,7 @@ import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionPeriod;
 import app.subscription.model.SubscriptionType;
 import app.subscription.service.SubscriptionService;
+import app.transaction.model.Transaction;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.UpgradeRequest;
@@ -49,7 +50,7 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ModelAndView upgradeSubscriptions(@RequestParam("subscription-type")SubscriptionType subscriptionType, UpgradeRequest upgradeRequest, HttpSession session) {
+    public String upgradeSubscriptions(@RequestParam("subscription-type")SubscriptionType subscriptionType, UpgradeRequest upgradeRequest, HttpSession session) {
         //@RequestParam("subscription-type") - така подавам типа на абонамента(DEFAULT, PREMIUM, ULTIMATE), имам три различни форми за тези абонаменти
 //          за да знаем коя форма е избрана, '/subscriptions?subscription-type=DEFAULT' - това е пътя който слагаме в action на формата в upgrade.html
 //        за следващата форма ще е '/subscriptions?subscription-type=PREMIUM'
@@ -58,10 +59,10 @@ public class SubscriptionController {
 
         UUID userId = (UUID) session.getAttribute("user_id");
         User userById = userService.getUserById(userId);
-        subscriptionService.upgradeSubscription(userById, subscriptionType,upgradeRequest);
+        Transaction upgradeResult = subscriptionService.upgradeSubscription(userById, subscriptionType, upgradeRequest);
 
 
-        return null;
+        return "redirect:/transactions/" + upgradeResult.getId();
     }
 
 

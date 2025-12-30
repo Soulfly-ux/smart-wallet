@@ -213,7 +213,7 @@
       <form class="form" th:action="@{'/subscriptions?subscription-type=PREMIUM'}" th:object="${upgradeRequest}" method="post">
         <label>Choose period</label>
         <select name="subscriptionPeriod" th:field="*{subscriptionPeriod}">
-          <option th:each="period : ${T(app.subscription.model.SubscriptionPeriod).values()}" th:value="period" th:text="${#strings.capitalize(#strings.toLowerCase(period.name()))  }" ></option>
+          <option th:each="period : ${T(app.subscription.model.SubscriptionPeriod).values()}" th:value="${period}" th:text="${#strings.capitalize(#strings.toLowerCase(period.name()))  }" ></option>
 
         </select>
         <label>Choose wallet to pay with</label>
@@ -269,7 +269,7 @@
       <form class="form" th:action="@{'/subscriptions?subscription-type=ULTIMATE'}" th:object="${upgradeRequest}" method="post">
         <label>Choose period</label>
         <select name="subscriptionPeriod" th:field="*{subscriptionPeriod}">
-          <option th:each="period : ${T(app.subscription.model.SubscriptionPeriod).values()}" th:value="period" th:text="${#strings.capitalize(#strings.toLowerCase(period.name()))  }" ></option>
+          <option th:each="period : ${T(app.subscription.model.SubscriptionPeriod).values()}" th:value="${period}" th:text="${#strings.capitalize(#strings.toLowerCase(period.name()))  }" ></option>
 
         </select>
         <label>Choose wallet to pay with</label>

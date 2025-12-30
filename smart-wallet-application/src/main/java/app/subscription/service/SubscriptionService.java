@@ -77,9 +77,9 @@ public class SubscriptionService {
 
         SubscriptionPeriod subscriptionPeriod = upgradeRequest.getSubscriptionPeriod();
         BigDecimal subscriptionPrice = getSubscriptionPrice(subscriptionPeriod, subscriptionType);
-        String type = subscriptionPeriod.name().substring(0, 1).toUpperCase() + subscriptionType.name().substring(1);
         String period = subscriptionPeriod.name().substring(0, 1).toUpperCase() + subscriptionPeriod.name().substring(1);
-        String description = " Purchase of %s %s subscription".formatted(type, period);
+        String type = subscriptionType.name().substring(0, 1).toUpperCase() + subscriptionType.name().substring(1);
+        String description = " Purchase of %s  %s subscription".formatted(period, type);
 
         Transaction transactionResult = walletService.charge(userById, upgradeRequest.getWalletId(), subscriptionPrice, description);
 
