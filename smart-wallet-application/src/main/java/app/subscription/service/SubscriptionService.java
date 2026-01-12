@@ -141,4 +141,27 @@ public class SubscriptionService {
         }
 
     }
+
+    public List<Subscription> getAllSubscriptionsReadyForRenewal() {
+        // трябват ни всички активни абонаменти и дата по малка от настоящата
+
+        return subscriptionRepository.findAllByStatusAndCompletedOnLessThanEqual(SubscriptionStatus.ACTIVE, LocalDateTime.now());
+    }
+
+    public void markSubscriptionAsCompleted(Subscription subscription) {
+
+        subscription.setStatus(SubscriptionStatus.COMPLETED);
+        subscription.setCompletedOn(LocalDateTime.now());
+
+
+        subscriptionRepository.save(subscription);
+    }
+
+    public void markSubscriptionAsTerminated(Subscription subscription) {
+
+        subscription.setStatus(SubscriptionStatus.TERMINATED);
+        subscription.setCompletedOn(LocalDateTime.now());
+
+        subscriptionRepository.save(subscription);
+    }
 }

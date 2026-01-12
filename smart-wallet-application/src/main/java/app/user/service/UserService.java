@@ -12,6 +12,8 @@ import app.web.dto.RegisterRequest;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +61,7 @@ public class UserService {
     }
 
 
-
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public User register(RegisterRequest registerRequest) {
 
@@ -104,7 +106,7 @@ public class UserService {
                 .updatedOn(LocalDateTime.now())
                 .build();
     }
-
+    @CacheEvict(value = "users", allEntries = true)
     public void editUserDetails(UUID id, EditProfileRequest editProfileRequest) {
         User userById = getUserById(id);
 
@@ -116,8 +118,9 @@ public class UserService {
 
        userRepository.save(userById);
     }
-
-
+     // В началото метода се изпълнява веднъж и после са пази в кеша
+    // Всяко следващо извикване резултатът се връща от кеша и няма да се  извиква от базата данни
+    @Cacheable("users")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -126,7 +129,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] not found".formatted(id)));
     }
 
-
+    @CacheEvict(value = "users", allEntries = true)
     public void switchStatus(UUID id) {
 
         User userById = getUserById(id);
@@ -146,7 +149,7 @@ public class UserService {
         userRepository.save(userById);
     }
 
-
+    @CacheEvict(value = "users", allEntries = true)
     public void switchRole(UUID id) {
 
         User userById = getUserById(id);

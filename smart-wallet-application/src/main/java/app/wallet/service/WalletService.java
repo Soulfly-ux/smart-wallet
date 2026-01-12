@@ -1,6 +1,9 @@
 package app.wallet.service;
 
+import app.Application;
+import app.email.service.EmailService;
 import app.exceptions.DomainException;
+import app.tracking.service.TrackingService;
 import app.transaction.model.Transaction;
 import app.transaction.model.TransactionStatus;
 import app.transaction.model.TransactionType;
@@ -9,14 +12,17 @@ import app.user.model.User;
 import app.wallet.model.Wallet;
 import app.wallet.model.WalletStatus;
 import app.wallet.repository.WalletRepository;
+import app.web.dto.PaymentNotificationEvent;
 import app.web.dto.TransferRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.Optional;
@@ -29,10 +35,13 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final TransactionService transactionService;
+    private final ApplicationEventPublisher eventPublisher;
     @Autowired
-    public WalletService(WalletRepository walletRepository, TransactionService transactionService) {
+    public WalletService(WalletRepository walletRepository, TransactionService transactionService, ApplicationEventPublisher eventPublisher) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
+
+        this.eventPublisher = eventPublisher;
     }
 
     public void createNewWallet(User user) {
@@ -186,7 +195,34 @@ public class WalletService {
 
         walletRepository.save(wallet); // съхранявам новия портфейл в с променени полета баланс и датата на актуализацията
 
-       return transactionService.createTransaction(user, walletId.toString(),SMART_WALLET_LTD,amount,wallet.getBalance(),wallet.getCurrency(),TransactionType.WITHDRAWAL,TransactionStatus.SUCCEEDED,description,null);
+        // Успешно плащане
+
+        PaymentNotificationEvent event = PaymentNotificationEvent.builder()// публикувам този евент и който има интерес нека слуша за него
+                .userId(user.getId())                            // ASYNC vs SYNC     - SYNC-> когато един клас публикува евент, той чака всички listeners да изпълнят своите задачи
+                                                                 // , преди да продължат нататък. Всичко това се случва в една нишка,
+                .email(user.getEmail())
+                .amount(amount)
+                .paymentTime(LocalDate.now())
+                .build();
+
+//        emailService.sendPaymentNotification(event); вместо да използваме тези сървизи, като депенденси, използвам ApplicationEventPublisher,
+//                                                      защото ако в един момент решим да премахнем trackingService по някаква причина
+//                                                      walletService няма да работи без тази зависимост, така по този начин walletService не знае за съществуването на тези два сервиса
+//                                                      Трябва да накараме тези два сървиза да слушат за евента (слагаме @Eventlisener над методите в тези класове),
+//                                                      когато се публикува обект  в случая тов е PaymentNotificationEvent и да слушат за него
+//        trackingService.trackNewPayment(event);
+
+        eventPublisher.publishEvent(event);
+
+       return transactionService.createTransaction(user, walletId.toString(),
+               SMART_WALLET_LTD,
+               amount,
+               wallet.getBalance(),
+               wallet.getCurrency(),
+               TransactionType.WITHDRAWAL,
+               TransactionStatus.SUCCEEDED,
+               description,
+               null);
     }
 
     public Wallet findWalletById(UUID walletId) {
