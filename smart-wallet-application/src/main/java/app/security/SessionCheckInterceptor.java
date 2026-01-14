@@ -29,7 +29,7 @@ public class SessionCheckInterceptor implements HandlerInterceptor {
     }
 
     //Този метод се изпълнява ПРЕДИ заявката да е изпълнена
-    //HttpServletRequest request - заявката  която се прааща към на шето приложение
+    //HttpServletRequest request - заявката  която се прааща към нашето приложение
     //HttpServletResponse response - отговор, който връщаме
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

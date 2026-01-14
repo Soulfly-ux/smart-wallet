@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class HelloWorldScheduler {
 
     //Scheduled Job every 10 seconds
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     public void sayHelloEvery10Seconds() {
 
         System.out.println("Hello World");

@@ -26,7 +26,7 @@ public class SubscriptionRenewalScheduler {
         this.subscriptionService = subscriptionService;
     }
 
-    @Scheduled(fixedRate = 20000)// на всеки 20 секунди
+ //   @Scheduled(fixedRate = 20000)// на всеки 20 секунди
     public void renewSubscriptions() {
 
         List<Subscription> subscriptions = subscriptionService.getAllSubscriptionsReadyForRenewal();
