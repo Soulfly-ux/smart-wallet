@@ -1,6 +1,6 @@
 package app.web;
 
-import app.security.RequireAdminRole;
+
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.EditProfileRequest;
@@ -29,7 +29,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequireAdminRole // анотация, която ние сме направили в security пакета
+//    @RequireAdminRole  анотация, която ние сме направили в security пакета
     @GetMapping
     public ModelAndView getAllUsers() {
 
