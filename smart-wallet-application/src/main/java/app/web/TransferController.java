@@ -1,5 +1,6 @@
 package app.web;
 
+import app.security.AuthenticationDetails;
 import app.transaction.model.Transaction;
 import app.user.model.User;
 import app.user.service.UserService;
@@ -8,6 +9,7 @@ import app.web.dto.TransferRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -31,11 +33,11 @@ public class TransferController {
     }
 
     @GetMapping
-    public ModelAndView getTransferPage(HttpSession session) {
+    public ModelAndView getTransferPage(@AuthenticationPrincipal AuthenticationDetails userDetails) {
 
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User userById = userService.getUserById(userId);
+
+        User userById = userService.getUserById(userDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");

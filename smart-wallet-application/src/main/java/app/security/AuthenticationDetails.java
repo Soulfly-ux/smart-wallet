@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -24,10 +25,13 @@ public class AuthenticationDetails implements UserDetails {
    private final Role role;
    private final boolean isActive;
 
-
+    // Този метод се използва за да върнем списък от авторизации, т.е. роли, текущия потребител има.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
+
+        return List.of(authority);// връща списък, защото потребителя може да има повече от една роля
     }
 
     @Override

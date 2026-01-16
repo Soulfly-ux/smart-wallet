@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,7 +40,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         .requestMatchers("/", "/register").permitAll()// всички endpoint-и с тези URL-и са разрешени за всеки
                         // login поведението идва наготово от Spring Security, ние не се грижим за него
                      //   .requestMatchers("/users").hasRole("ADMIN")// endpoint-ите с тези URL-и са разрешени само ако потребителят е администратор
-
+                        .requestMatchers("/users").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form-> form
                         .loginPage("/login")// на кой ендпоинт ще се намира страницата
@@ -49,7 +51,21 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         .defaultSuccessUrl("/home")// на кой endpoint ще се връща след успешна логин
                         .failureUrl("/login?error")// на кой endpoint ще се връща след неуспешна логин
                         .permitAll()// всеки да може да използва логин страницата
+                )
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))// на кой endpoint ще се намира страницата
+                        .logoutSuccessUrl("/")// ПРИ ЛОГАУТ ТРЯБВА ДА ПРАТИМ ПОТРЕБИТЕЛЯ НА СТРАНИЦА ПОЗВОЛЕНА ЗА ВСИЧКИ
+
+
+
+
                 );
+
+
+
+
+
+
 
 
 

@@ -45,24 +45,24 @@ public class UserService implements UserDetailsService {
 
 
 
-    public User login(LoginRequest loginRequest) {
-
-        // проверяваме дали има потребител с това потребителско име
-
-        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
-
-        if (optionalUser.isEmpty()) {
-            throw new DomainException("Username or password are invalid.");// добре е тук да не даваме пряка информация кое от двете не е вярно.
-        }
-
-        // проверяваме дали паролата е вярна
-        User user = optionalUser.get();// .get() - връща това което Optional- a пази
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) { // passwordEncoder.matches( чистата парола, енкоднатата парола в базата данни)
-            throw new DomainException("Username or password are invalid.");
-        }
-
-        return user;
-    }
+//    public User login(LoginRequest loginRequest) {
+//
+//        // проверяваме дали има потребител с това потребителско име
+//
+//        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
+//
+//        if (optionalUser.isEmpty()) {
+//            throw new DomainException("Username or password are invalid.");// добре е тук да не даваме пряка информация кое от двете не е вярно.
+//        }
+//
+//        // проверяваме дали паролата е вярна
+//        User user = optionalUser.get();// .get() - връща това което Optional- a пази
+//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) { // passwordEncoder.matches( чистата парола, енкоднатата парола в базата данни)
+//            throw new DomainException("Username or password are invalid.");
+//        }
+//
+//        return user;
+//    }
 
 
     @CacheEvict(value = "users", allEntries = true)
