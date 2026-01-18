@@ -29,7 +29,9 @@ public class AuthenticationDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
+        // не е задължително да се ползва този клас, но това е по-просто и е по-подходящо за този случай:
+       // SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name()); // -> АКО ИЗПОЛЗВАМ .hasAuthority
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.name());// -> АКО ИЗПОЛЗВАМ .hasRole в метод контролерите или конфигурацията
 
         return List.of(authority);// връща списък, защото потребителя може да има повече от една роля
     }
