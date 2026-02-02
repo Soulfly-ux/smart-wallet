@@ -1,11 +1,13 @@
 package app.web;
 
+import app.security.AuthenticationDetails;
 import app.transaction.model.Transaction;
 import app.transaction.service.TransactionService;
 import app.user.model.User;
 import app.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +31,10 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public ModelAndView getTransactionPage(HttpSession session) {
+    public ModelAndView getTransactionPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
-        UUID userId =(UUID) session.getAttribute("user_id");
-        List<Transaction> allByOwnerId = transactionService.getAllByOwnerId(userId);
+
+        List<Transaction> allByOwnerId = transactionService.getAllByOwnerId(authenticationDetails.getUserId());
 
 
         ModelAndView modelAndView = new ModelAndView();

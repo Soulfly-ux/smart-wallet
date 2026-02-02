@@ -171,7 +171,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // тук е логиката за логване на потребител.Нашата вече не ни трябва.Логването вече е в ръцете на spring security
-
+        // ако логиката ни е да се логваме с e-mail, а не username , като параметър тук подаваме e-mail, за да може Spring Security да търси потребител по e-mail ,
+        // като използваме .findByЕmail() вместо .findByUsername()
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("Username [%s] not found".formatted(username)));// това е логика за това, че ако не съществува потребител с това потребителско име, да
 

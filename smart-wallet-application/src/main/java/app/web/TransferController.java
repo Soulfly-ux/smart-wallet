@@ -48,7 +48,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult,HttpSession session) {
+    public ModelAndView transfer(@Valid TransferRequest transferRequest, BindingResult bindingResult,@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
 
 //        1.Потребителя изпраща POST заявка за трансфериране на пари
@@ -57,8 +57,8 @@ public class TransferController {
 //          4.Ако заявката е валидна, се изпълнява трансферирането на пари
 //          5.Връща се на страницата за КОНКРЕТНАТА транзакция - за това ни трябва id на транзакцията
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User userById = userService.getUserById(userId);
+
+        User userById = userService.getUserById(authenticationDetails.getUserId());
         if (bindingResult.hasErrors()) {
 
 

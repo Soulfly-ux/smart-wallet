@@ -106,7 +106,7 @@
       </div>
 
       <div class="wallet-balance">
-        <p class="balance">36.03 EUR</p>
+        <p class="balance" th:text="${user.getWallets().get()}">36.03 EUR</p>
         <p class="available-balance-text">Available Balance</p>
       </div>
 
@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <form class="wallet-block new-wallet" action="/wallets" method="post">
+    <form class="wallet-block new-wallet" th:action="@{/wallets}" method="post">
       <button type="submit"></button>
     </form>
 

@@ -1,5 +1,6 @@
 package app.web;
 
+import app.security.AuthenticationDetails;
 import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionPeriod;
 import app.subscription.model.SubscriptionType;
@@ -8,8 +9,9 @@ import app.transaction.model.Transaction;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.UpgradeRequest;
-import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,10 +37,10 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public ModelAndView upgradeSubscriptions(HttpSession session) {
+    public ModelAndView upgradeSubscriptions(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
        // трябва ни сесия за да знаем, кой потребител иска да си ъпгрейдне абоннамента
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User userById = userService.getUserById(userId);
+
+        User userById = userService.getUserById(authenticationDetails.getUserId());
 
 
         ModelAndView modelAndView = new ModelAndView();
@@ -50,15 +52,15 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public String upgradeSubscriptions(@RequestParam("subscription-type")SubscriptionType subscriptionType, UpgradeRequest upgradeRequest, HttpSession session) {
+    public String upgradeSubscriptions(@RequestParam("subscription-type")SubscriptionType subscriptionType, UpgradeRequest upgradeRequest,  @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
         //@RequestParam("subscription-type") - така подавам типа на абонамента(DEFAULT, PREMIUM, ULTIMATE), имам три различни форми за тези абонаменти
 //          за да знаем коя форма е избрана, '/subscriptions?subscription-type=DEFAULT' - това е пътя който слагаме в action на формата в upgrade.html
 //        за следващата форма ще е '/subscriptions?subscription-type=PREMIUM'
 //        th:if="${!(user.subscriptions.get(0).type.name())}" - get(0) е за да вземем първия абонамент на потребител, който е активния абонамент
 //        тази проверка казва, ако не е на този абонамент, тогава може да си го купи
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User userById = userService.getUserById(userId);
+
+        User userById = userService.getUserById(authenticationDetails.getUserId());
         Transaction upgradeResult = subscriptionService.upgradeSubscription(userById, subscriptionType, upgradeRequest);
 
 
@@ -68,10 +70,10 @@ public class SubscriptionController {
 
 
     @GetMapping("/history")
-    public ModelAndView getHistoryPage(HttpSession session) {
+    public ModelAndView getHistoryPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User userById = userService.getUserById(userId);
+
+        User userById = userService.getUserById(authenticationDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
 //
