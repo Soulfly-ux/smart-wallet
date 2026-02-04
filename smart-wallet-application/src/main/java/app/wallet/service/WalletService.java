@@ -1,9 +1,8 @@
 package app.wallet.service;
 
-import app.Application;
-import app.email.service.EmailService;
 import app.exceptions.DomainException;
-import app.tracking.service.TrackingService;
+import app.subscription.model.Subscription;
+import app.subscription.model.SubscriptionType;
 import app.transaction.model.Transaction;
 import app.transaction.model.TransactionStatus;
 import app.transaction.model.TransactionType;
@@ -15,16 +14,17 @@ import app.wallet.repository.WalletRepository;
 import app.web.dto.PaymentNotificationEvent;
 import app.web.dto.TransferRequest;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.awt.font.MultipleMaster;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Currency;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,8 +44,51 @@ public class WalletService {
         this.eventPublisher = eventPublisher;
     }
 
-    public void createNewWallet(User user) {
+    public void unlockNewWallet(User user) {
+        List<Wallet> allByOwnerUsername = walletRepository.findAllByOwnerUsername(user.getUsername());
+        Subscription activeSubscription = user.getSubscriptions().get(0);//get(0)-> последния(активния) създаден абонамент
 
+//        Pesho
+//        Subs: Ultimate
+//        Wallets: 1     при тези условия и трите проверки ще са false
+
+//        Goshho
+//        Subs: Premium
+//        Wallets: 2    при тези условия втората проверка е true и няма да се отключи нов портфейл
+
+
+        // ако тези булеви = true , не може да се отключи нов портфейл
+        boolean isDefaultPlanAndMaxWalletUnlocked = activeSubscription.getType() == SubscriptionType.DEFAULT && allByOwnerUsername.size() == 1;//ако е активен план и портфейлът е един
+        boolean isPremiumPlanAndMaxWalletUnlocked = activeSubscription.getType() == SubscriptionType.PREMIUM && allByOwnerUsername.size() == 2;
+        boolean isUltimatePlanAndMaxWalletUnlocked = activeSubscription.getType() == SubscriptionType.ULTIMATE && allByOwnerUsername.size() == 3;
+
+        if (isDefaultPlanAndMaxWalletUnlocked || isPremiumPlanAndMaxWalletUnlocked || isUltimatePlanAndMaxWalletUnlocked) {
+            throw new DomainException("You have reached the maximum number of wallets.");
+        }
+
+
+        Wallet newWallet = Wallet.builder()
+                .owner(user)
+                .status(WalletStatus.ACTIVE)
+                .balance(BigDecimal.valueOf(0))
+                .currency(Currency.getInstance("EUR"))
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
+
+        walletRepository.save(newWallet);
+
+    }
+
+    public void initializeFirstWallet(User user) {
+      //този метод се използва сама за създаване на първия портфейл при регистрация, а не и за добавяне на нов по- късно
+
+        List<Wallet> userWalletList = walletRepository.findAllByOwnerUsername(user.getUsername());
+       //  не може да се създаде с този метод втори портфейл, освен при регистрацията на потребителя
+        if (!userWalletList.isEmpty()) {
+
+            throw new DomainException("This user already has a wallet. First wallet already exists.");
+        }
         Wallet wallet =  walletRepository.save(initializeWallet(user)) ;
 
         log.info("Wallet created: {}", wallet);

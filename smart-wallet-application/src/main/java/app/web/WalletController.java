@@ -45,7 +45,7 @@ public class WalletController {
     public String createWallet(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
         User userById = userService.getUserById(authenticationDetails.getUserId());
-        walletService.createNewWallet(userById);
+        walletService.unlockNewWallet(userById);
         return "redirect:/wallets";
     }
 }

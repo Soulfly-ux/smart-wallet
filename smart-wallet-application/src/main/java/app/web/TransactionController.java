@@ -24,10 +24,12 @@ public class TransactionController {
 
 
     private final TransactionService transactionService;
+    private final UserService userService;
     @Autowired
-    public TransactionController( TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, UserService userService) {
 
         this.transactionService = transactionService;
+        this.userService = userService;
     }
 
     @GetMapping()
@@ -35,24 +37,27 @@ public class TransactionController {
 
 
         List<Transaction> allByOwnerId = transactionService.getAllByOwnerId(authenticationDetails.getUserId());
-
+        User user = userService.getUserById(authenticationDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transactions");
         modelAndView.addObject("transactions", allByOwnerId);
+        modelAndView.addObject("user", user);
 
 
         return modelAndView;
     }
 
     @GetMapping("/{id}") // връща транзакция за конкретно id
-    public  ModelAndView getTransactionById(@PathVariable UUID id) {
+    public  ModelAndView getTransactionById(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
         Transaction transactionById = transactionService.getTransactionById(id);
+        User user = userService.getUserById(authenticationDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transaction-result");
         modelAndView.addObject("transaction", transactionById);
+        modelAndView.addObject("user", user);
 
         return modelAndView;
     }

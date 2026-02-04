@@ -160,7 +160,7 @@
         </select>
         <label>Choose wallet to pay with</label>
         <select name="walletId" th:field="*{walletId}">
-          <option th:each="wallet : ${user.wallets}" th:value="${wallet.id}" th:text="${'Standart Wallet - '+ ' - ' + wallet.balance + 'EUR'}">Standard Wallet - 36.03 EUR</option>
+          <option th:each="wallet : ${user.wallets}" th:value="${wallet.id}" th:text="${'Standart Wallet  '+ ' - ' + wallet.balance + 'EUR'}">Standard Wallet - 36.03 EUR</option>
         </select>
         <!-- Buttons does not support th:field and th:value, so we can use name(pick the object field) value(the value to be bind to that field)-->
         <button th:if="${!(user.subscriptions.get(0).type.name() == 'DEFAULT')}" class="subscription-action-button" type="submit" name="subscriptionType" id="DEFAULT" value="DEFAULT">

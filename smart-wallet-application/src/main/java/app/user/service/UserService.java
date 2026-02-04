@@ -83,7 +83,7 @@ public class UserService implements UserDetailsService {
 
         // при създаване на нов потребител, правим  default wallet and subscription:
 
-        walletService.createNewWallet(user);
+        walletService.initializeFirstWallet(user);
         subscriptionService.createDefaultSubscription(user);
 
         //
