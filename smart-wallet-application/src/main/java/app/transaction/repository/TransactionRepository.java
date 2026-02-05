@@ -11,4 +11,7 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
     List<Transaction> findAllByOwnerIdOrderByCreatedOnDesc(UUID ownerId);
+
+
+    List<Transaction> findAllBySenderOrReceiverOrderByCreatedOnDesc(String sender, String receiver);
 }

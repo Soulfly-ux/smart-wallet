@@ -1,6 +1,7 @@
 package app.web;
 
 import app.security.AuthenticationDetails;
+import app.transaction.model.Transaction;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.wallet.service.WalletService;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -33,9 +36,15 @@ public class WalletController {
 
         User userById = userService.getUserById(authenticationDetails.getUserId());
 
+        Map<UUID, List<Transaction>> lastFourTransactionsPerWallet = walletService.getLastFourTransactions(userById.getWallets());
+        //UUID -> ID на конкретен портфейл
+        //List<Transaction>> -> последните четири транзакции на този конкретен портфейл
+
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("wallets");
         modelAndView.addObject("user", userById);
+        modelAndView.addObject("lastFourTransactions", lastFourTransactionsPerWallet);
 
         return modelAndView;
     }

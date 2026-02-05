@@ -23,10 +23,7 @@ import java.awt.font.MultipleMaster;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -281,5 +278,18 @@ public class WalletService {
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
+    }
+
+    public Map<UUID, List<Transaction>> getLastFourTransactions(List<Wallet> wallets) {
+
+        Map<UUID, List<Transaction>> transactionsByWalletId = new HashMap<>();
+
+        for ( Wallet wallet : wallets) {
+
+           List<Transaction> lastFourTransactions= transactionService.getLastFourTransactionsByWalletId(wallet);
+            transactionsByWalletId.put(wallet.getId(),lastFourTransactions );
+        }
+
+        return transactionsByWalletId;
     }
 }
