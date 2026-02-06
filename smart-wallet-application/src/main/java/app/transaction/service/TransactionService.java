@@ -63,7 +63,7 @@ public class TransactionService {
 
 
         List<Transaction> lastTransactions = transactionRepository.findAllBySenderOrReceiverOrderByCreatedOnDesc(wallet.getId().toString(), wallet.getId().toString()).stream()
-                .filter(transaction -> transaction.getOwner().getId() == wallet.getOwner().getId())// искам и транзакцията и портфейла да са на един собственик
+                .filter(transaction -> transaction.getOwner().getId() == wallet.getOwner().getId())// искам и транзакцията и портфейла да са на един собственик, така искам да взема тарнзакциите на ПЕШО
                 .filter(transaction -> transaction.getTransactionStatus() == TransactionStatus.SUCCEEDED)
                 .limit(4)
                 .toList();

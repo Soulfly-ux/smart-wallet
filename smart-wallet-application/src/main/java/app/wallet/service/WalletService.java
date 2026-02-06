@@ -94,7 +94,7 @@ public class WalletService {
     }
 
     
-    public Transaction transferMoney(UUID walletId, BigDecimal amount) {
+    public Transaction topUp(UUID walletId, BigDecimal amount) {
         
         // взимаме портфейла по UUID:
         Wallet wallet = findWalletById(walletId);
@@ -291,5 +291,32 @@ public class WalletService {
         }
 
         return transactionsByWalletId;
+    }
+
+    public void changeStatus(UUID walletId, UUID ownerId) {
+
+        // трябва ни ид и на собственика, за да сме сигурни, че само той може да сменя статуса на портфейла си
+
+        Optional<Wallet> optionalWallet = walletRepository.findByIdAndOwnerId(walletId, ownerId);
+
+        if (optionalWallet.isEmpty()) {
+            throw new DomainException("Wallet with id [%s] does not belong to user with id[%s]".formatted(walletId, ownerId));
+        }
+
+        // така взимам портфейла:
+        Wallet wallet = optionalWallet.get();
+
+        if (wallet.getStatus() == WalletStatus.ACTIVE) {
+            wallet.setStatus(WalletStatus.INACTIVE);
+        } else {
+            wallet.setStatus(WalletStatus.ACTIVE);
+        }
+
+        walletRepository.save(wallet);// обнови това състояние в базата
+
+    }
+
+    public void topUp(UUID id, UUID userId) {
+
     }
 }
