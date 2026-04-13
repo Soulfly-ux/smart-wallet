@@ -77,7 +77,7 @@ public class WalletService {
 
     }
 
-    public void initializeFirstWallet(User user) {
+    public Wallet initializeFirstWallet(User user) {
       //този метод се използва сама за създаване на първия портфейл при регистрация, а не и за добавяне на нов по- късно
 
         List<Wallet> userWalletList = walletRepository.findAllByOwnerUsername(user.getUsername());
@@ -90,7 +90,7 @@ public class WalletService {
 
         log.info("Wallet created: {}", wallet);
 
-       
+       return wallet;
     }
 
     

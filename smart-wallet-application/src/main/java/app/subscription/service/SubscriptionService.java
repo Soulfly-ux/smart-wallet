@@ -35,13 +35,13 @@ public class SubscriptionService {
 
     }
 
-    public void createDefaultSubscription(User user) { // User user- subscription за конкретен user
+    public Subscription createDefaultSubscription(User user) { // User user- subscription за конкретен user
 
         Subscription subscription = subscriptionRepository.save( initializeSubscription(user)); // сейвам преди лога зашото за да взема ид
                                                                                               // , трябва да съм го записал в базата
         log.info("Successfully create new subscription with id [%s] and type [%s]".formatted(subscription.getId(), subscription.getType()));
 
-
+      return subscription;
 
     }
 

@@ -1,11 +1,14 @@
 package app.user.service;
 
+import app.email.service.NotificationService;
 import app.exceptions.DomainException;
 import app.security.AuthenticationDetails;
+import app.subscription.model.Subscription;
 import app.subscription.service.SubscriptionService;
 import app.user.model.Role;
 import app.user.model.User;
 import app.user.repository.UserRepository;
+import app.wallet.model.Wallet;
 import app.wallet.service.WalletService;
 import app.web.dto.EditProfileRequest;
 import app.web.dto.LoginRequest;
@@ -35,12 +38,14 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;// идва от spring security, но трябва да кажем каква имплементация искаме (package config), защото това е interface
     private final SubscriptionService subscriptionService;
     private final WalletService walletService;
+    private final NotificationService notificationService;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SubscriptionService subscriptionService, WalletService walletService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SubscriptionService subscriptionService, WalletService walletService, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.subscriptionService = subscriptionService;
         this.walletService = walletService;
+        this.notificationService = notificationService;
     }
 
 
@@ -83,8 +88,15 @@ public class UserService implements UserDetailsService {
 
         // при създаване на нов потребител, правим  default wallet and subscription:
 
-        walletService.initializeFirstWallet(user);
-        subscriptionService.createDefaultSubscription(user);
+        Wallet standartWallet = walletService.initializeFirstWallet(user);
+        user.setWallets(List.of(standartWallet));
+
+
+        Subscription defaultSubscription = subscriptionService.createDefaultSubscription(user);
+        user.setSubscriptions(List.of(defaultSubscription));
+
+        //Persist new notification preference with  isEnabled = false; когато се регистрира потребител, е с настройка за изключени нотификации
+        notificationService.saveNotificationPreference(user.getId(), false, null);// email = null, тъй като това е нов потребител, и няма да има емаил адрес
 
         //
         log.info("User {} created.", user.getUsername());
