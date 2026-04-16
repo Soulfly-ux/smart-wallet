@@ -98,6 +98,12 @@ public class UserService implements UserDetailsService {
         //Persist new notification preference with  isEnabled = false; когато се регистрира потребител, е с настройка за изключени нотификации
         notificationService.saveNotificationPreference(user.getId(), false, null);// email = null, тъй като това е нов потребител, и няма да има емаил адрес
 
+     /*   UserRegisteredEvent event = UserRegisteredEvent.builder()
+                .userId(user.getId())
+                .createdOn(user.getCreatedOn())
+                .build();
+        userRegisteredEventProducer.sendEvent(event);*/
+
         //
         log.info("User {} created.", user.getUsername());
         return user;
@@ -132,7 +138,19 @@ public class UserService implements UserDetailsService {
      userById.setEmail(editProfileRequest.getEmail());
      userById.setProfilePicture(editProfileRequest.getProfilePictureUrl());
 
-       userRepository.save(userById);
+        userRepository.save(userById);
+
+        if (userById.getEmail() != null && !userById.getEmail().isBlank()) {
+            notificationService.saveNotificationPreference(
+                    userById.getId(),
+                    true,
+                    editProfileRequest.getEmail()
+            );
+
+
+        }
+
+
     }
      // В началото метода се изпълнява веднъж и после са пази в кеша
     // Всяко следващо извикване резултатът се връща от кеша и няма да се  извиква от базата данни

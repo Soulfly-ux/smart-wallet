@@ -1,12 +1,12 @@
 package app.email.client;
 
+import app.email.client.dto.NotificationPreferenceResponse;
 import app.email.client.dto.UpsertNotificationPreference;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @FeignClient(name = "notification-svc", url = "http://localhost:8081/api/v1/notifications/") // url-  това е основния endpoint на контролерав
                                                                                              // на notification-svc + останалите endpoint-и в контролера
@@ -26,5 +26,9 @@ public interface NotificationClient {
 
 
     // тук returntype - може на ResponseEntity, може да е Void, въпреки, че в микросървиза notification-svc е DTO,
+
+
+    @GetMapping("/preferences")
+    ResponseEntity<NotificationPreferenceResponse> getUserNotificationPreferences(@RequestParam(name = "userId") UUID userId);
 
 }
