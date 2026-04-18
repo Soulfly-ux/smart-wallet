@@ -2,12 +2,14 @@ package app.email.service;
 
 import app.email.client.NotificationClient;
 import app.email.client.dto.NotificationPreferenceResponse;
+import app.email.client.dto.NotificationResponse;
 import app.email.client.dto.UpsertNotificationPreference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -54,10 +56,21 @@ public class NotificationService {
 
         ResponseEntity<NotificationPreferenceResponse> httpResponse = notificationClient.getUserNotificationPreferences(userId);
 
-        if (httpResponse.getStatusCode().is2xxSuccessful()) {
+        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Notification preference for user id [%s] doesn't exist.".formatted(userId)); // тук можем да хвърлим EXCEPTION, защото не ни трябва да показваме нотификациите на даден потребител, ако той не ги е включил
         }
 
         return httpResponse.getBody();
+    }
+
+    public List<NotificationResponse> getNotificationHistory(UUID id) {
+
+        ResponseEntity<List<NotificationResponse>> httpResponse = notificationClient.getNotificationHistory(id);
+
+        return httpResponse.getBody();
+    }
+
+    public void sendNotification(UUID id, String moneyTransferSuccessful, String emailBody) {
+
     }
 }

@@ -96,7 +96,11 @@ public class UserService implements UserDetailsService {
         user.setSubscriptions(List.of(defaultSubscription));
 
         //Persist new notification preference with  isEnabled = false; когато се регистрира потребител, е с настройка за изключени нотификации
-        notificationService.saveNotificationPreference(user.getId(), false, null);// email = null, тъй като това е нов потребител, и няма да има емаил адрес
+        notificationService.saveNotificationPreference(
+                user.getId(),
+                false,
+                null
+        );
 
      /*   UserRegisteredEvent event = UserRegisteredEvent.builder()
                 .userId(user.getId())
@@ -132,6 +136,16 @@ public class UserService implements UserDetailsService {
     public void editUserDetails(UUID id, EditProfileRequest editProfileRequest) {
         User userById = getUserById(id);
 
+        // Ако няма имейл, нотификациите не са позволени
+        if (editProfileRequest.getEmail().isBlank()) {
+
+            notificationService.saveNotificationPreference(
+                    userById.getId(),
+                    false,
+                    null
+            );
+
+        }
 
      userById.setFirstName(editProfileRequest.getFirstName());
      userById.setLastName(editProfileRequest.getLastName());
@@ -140,7 +154,8 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(userById);
 
-        if (userById.getEmail() != null && !userById.getEmail().isBlank()) {
+        // След добавяне на имейл нотификациите автоматично стават позволени
+        if (!editProfileRequest.getEmail().isBlank()) {
             notificationService.saveNotificationPreference(
                     userById.getId(),
                     true,

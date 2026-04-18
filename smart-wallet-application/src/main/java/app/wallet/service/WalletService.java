@@ -1,5 +1,6 @@
 package app.wallet.service;
 
+import app.email.service.NotificationService;
 import app.exceptions.DomainException;
 import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionType;
@@ -33,12 +34,14 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final TransactionService transactionService;
     private final ApplicationEventPublisher eventPublisher;
+    private final NotificationService notificationService;
     @Autowired
-    public WalletService(WalletRepository walletRepository, TransactionService transactionService, ApplicationEventPublisher eventPublisher) {
+    public WalletService(WalletRepository walletRepository, TransactionService transactionService, ApplicationEventPublisher eventPublisher, NotificationService notificationService) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
 
         this.eventPublisher = eventPublisher;
+        this.notificationService = notificationService;
     }
 
     public void unlockNewWallet(User user) {
@@ -191,6 +194,10 @@ public class WalletService {
                 transferDescription,
                 null
         );
+
+        // Автоматично получаване на нотификация до изпращача, когато има трансфер напари
+        String emailBody = "You sent %.2f EUR to %s".formatted(transferRequest.getAmount(), transferRequest.getToUsername());
+        notificationService.sendNotification(sender.getId(), "Money transfer successful", emailBody );
 
                   return withdrawal;
 
