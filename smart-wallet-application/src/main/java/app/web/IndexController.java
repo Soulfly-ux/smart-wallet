@@ -1,5 +1,6 @@
 package app.web;
 
+import app.exceptions.UserNameAlreadyExist;
 import app.security.AuthenticationDetails;
 import app.user.model.User;
 import app.user.service.UserService;
@@ -121,6 +122,11 @@ public class IndexController {
        return new ModelAndView("redirect:/login");
     }
 
+    @GetMapping("/not-found")
+    public String getNotFoundPage() {
+        return "not-found";
+    }
+
     @GetMapping("/home")
     public ModelAndView getHomePage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
         //искам да заредя тази страница с детайлите на потребителя, който е влезъл в тази страница
@@ -146,5 +152,13 @@ public class IndexController {
 //        return "redirect:/";
 //    }
 
+   @ExceptionHandler(UserNameAlreadyExist.class)
+    public ModelAndView handleUserNameAlreadyExist() {
+        // Този метод ще се задейства само и единствено ако заявката е минала през този контролер
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("not-found");
 
+
+        return modelAndView;
+   }
 }

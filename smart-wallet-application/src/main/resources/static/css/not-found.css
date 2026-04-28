@@ -1,0 +1,87 @@
+.not-found-card {
+  width: 100%;
+  max-width: 560px;
+  margin: 24px auto 0;
+  padding: 42px 38px;
+  text-align: center;
+  background-color: rgba(100, 91, 240, 0.11);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.31);
+}
+
+.not-found-card * {
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.status-code {
+  margin: 0 0 8px;
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1;
+  background: linear-gradient(to left, #e6e0ff, #b6aaff, #8e7dff);
+  background-size: 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.not-found-card h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 42px;
+}
+
+.not-found-text {
+  margin: 18px auto 0;
+  max-width: 420px;
+  color: #d9d9ef;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.not-found-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.not-found-actions .button {
+  min-width: 140px;
+  text-align: center;
+}
+
+.back-home:hover,
+.back-login:hover {
+  background: radial-gradient(circle at 90% top, #746ab0 0%, #6a61a4 10%, #605899 20%, #56508d 30%, #4c477f 40%, #423f73 50%, #383666 60%, #2e2d5a 70%, #24244d 80%, #1a1a41 90%, #101035 100%);
+  color: white;
+  box-shadow: inset 0 1px 9px rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 640px) {
+  .not-found-card {
+    margin-top: 12px;
+    padding: 34px 22px;
+  }
+
+  .status-code {
+    font-size: 58px;
+  }
+
+  .not-found-card h1 {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
