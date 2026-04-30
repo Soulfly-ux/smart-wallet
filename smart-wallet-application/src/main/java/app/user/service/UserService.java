@@ -2,6 +2,7 @@ package app.user.service;
 
 import app.email.service.NotificationService;
 import app.exceptions.DomainException;
+import app.exceptions.UserNameAlreadyExist;
 import app.security.AuthenticationDetails;
 import app.subscription.model.Subscription;
 import app.subscription.service.SubscriptionService;
@@ -78,7 +79,7 @@ public class UserService implements UserDetailsService {
 
         //validate username
         if (userOptional.isPresent()) {
-            throw new DomainException("Username [%s] already exists.".formatted(registerRequest.getUsername()));
+            throw new UserNameAlreadyExist("Username [%s] already exists.".formatted(registerRequest.getUsername()));
         }
 
         // Ако не съществува такова потребителско име , създаваме нов потребител(create new user account)

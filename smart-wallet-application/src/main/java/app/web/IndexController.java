@@ -152,13 +152,17 @@ public class IndexController {
 //        return "redirect:/";
 //    }
 
-   @ExceptionHandler(UserNameAlreadyExist.class)
-    public ModelAndView handleUserNameAlreadyExist() {
-        // Този метод ще се задейства само и единствено ако заявката е минала през този контролер
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("not-found");
+//   @ExceptionHandler(UserNameAlreadyExist.class)
+//    public ModelAndView handleUserNameAlreadyExist() {
+//        // Този метод ще се задейства само и единствено ако заявката е минала през този контролер
+//       // По- използваният начин е да имаме GlobalExceptionHanldler клас, а не да правим във всеки контролер, така не ги роварим с излишна логика
+//       // Tози метод го слагаме там и така ще действа за всички контролери, не само за този
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("not-found");
+//
+//
+//        return modelAndView;
+//   }
 
-
-        return modelAndView;
-   }
+   // @ExceptionHandler могат да се използват, както за Thymeleaf така и за REST API, но при REST API, не връшаме modelAndView a json
 }

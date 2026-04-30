@@ -1,6 +1,7 @@
 package app.email.client;
 
 import app.email.client.dto.NotificationPreferenceResponse;
+import app.email.client.dto.NotificationRequest;
 import app.email.client.dto.NotificationResponse;
 import app.email.client.dto.UpsertNotificationPreference;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -35,4 +36,13 @@ public interface NotificationClient {
 
     @GetMapping
     ResponseEntity<List<NotificationResponse>> getNotificationHistory(@RequestParam(name = "userId") UUID id);
+
+     @PostMapping
+     ResponseEntity<Void> sendNotification(@RequestBody NotificationRequest notificationRequest);
+
+     @PutMapping("/preferences")
+     ResponseEntity<Void> changeNotificationPreference(@RequestParam(name = "userId") UUID userId, @RequestParam(name = "enabled") boolean enabled);
+
+
+
 }

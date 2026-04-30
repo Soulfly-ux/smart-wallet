@@ -2,6 +2,7 @@ package app.email.service;
 
 import app.email.client.NotificationClient;
 import app.email.client.dto.NotificationPreferenceResponse;
+import app.email.client.dto.NotificationRequest;
 import app.email.client.dto.NotificationResponse;
 import app.email.client.dto.UpsertNotificationPreference;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,40 @@ public class NotificationService {
         return httpResponse.getBody();
     }
 
-    public void sendNotification(UUID id, String moneyTransferSuccessful, String emailBody) {
+    public void sendNotification(UUID userId, String emailSubject, String emailBody) {
+
+        // POST заявката за изпращане на нотификация в контролера на notification-svc, очаква като RequestBody едно дто(NotificationRequest),
+        // за това си правим и тук такова. Неговите полета са същите като параметрите на този метод(id, subject, body)
+
+
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .userId(userId)
+                .subject(emailSubject)
+                .body(emailBody)
+                .build();
+
+        ResponseEntity<Void> httpResponse;
+        try {
+            httpResponse= notificationClient.sendNotification(notificationRequest);
+            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
+                log.error("Can't send notification to user id [%s]".formatted(userId));
+            }
+        }catch (Exception e) {
+            log.warn("Can't send notification to user id [%s]".formatted(userId));
+        }
+
+
 
     }
+
+    public void updateNotificationPreference(UUID userId, boolean enabled) {
+
+       try {
+           notificationClient.changeNotificationPreference(userId,enabled);
+       }catch (Exception e) {
+           log.warn("Can't update notifications for user with id [%s]".formatted(userId));
+       }
+    }
+
+
 }
