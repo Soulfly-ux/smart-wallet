@@ -138,7 +138,7 @@ public class UserService implements UserDetailsService {
         User userById = getUserById(id);
 
         // Ако няма имейл, нотификациите не са позволени
-        if (editProfileRequest.getEmail().isBlank()) {
+        if (editProfileRequest.getEmail() == null || editProfileRequest.getEmail().isBlank()  ) {
 
             notificationService.saveNotificationPreference(
                     userById.getId(),
@@ -156,7 +156,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userById);
 
         // След добавяне на имейл нотификациите автоматично стават позволени
-        if (!editProfileRequest.getEmail().isBlank()) {
+        if (editProfileRequest.getEmail() != null && !editProfileRequest.getEmail().isBlank()) {
             notificationService.saveNotificationPreference(
                     userById.getId(),
                     true,

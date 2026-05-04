@@ -53,16 +53,26 @@ public class NotificationService {
 
     public NotificationPreferenceResponse getNotificationPreferences(UUID userId) {
 
-        // метод за показване на страницата с нотификации на даден потребител
+        try {
+            ResponseEntity<NotificationPreferenceResponse> httpResponse =
+                    notificationClient.getUserNotificationPreferences(userId);
 
-        ResponseEntity<NotificationPreferenceResponse> httpResponse = notificationClient.getUserNotificationPreferences(userId);
+            if (httpResponse.getStatusCode().is2xxSuccessful() && httpResponse.getBody() != null) {
+                return httpResponse.getBody();
+            }
 
-        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Notification preference for user id [%s] doesn't exist.".formatted(userId)); // тук можем да хвърлим EXCEPTION, защото не ни трябва да показваме нотификациите на даден потребител, ако той не ги е включил
+        } catch (Exception e) {
+            log.warn("Notification preference for user id [{}] was not found. Returning default preferences.", userId);
         }
 
-        return httpResponse.getBody();
+        return NotificationPreferenceResponse.builder()
+                .userId(userId)
+                .type("EMAIL")
+                .enabled(false)
+                .contactInfo(null)
+                .build();
     }
+
 
     public List<NotificationResponse> getNotificationHistory(UUID id) {
 
@@ -97,14 +107,33 @@ public class NotificationService {
 
     }
 
-    public void updateNotificationPreference(UUID userId, boolean enabled) {
+    public void updateNotificationPreference(UUID userId, boolean enabled, String email) {
 
-       try {
-           notificationClient.changeNotificationPreference(userId,enabled);
-       }catch (Exception e) {
-           log.warn("Can't update notifications for user with id [%s]".formatted(userId));
-       }
+        if (email == null || email.isBlank()) {
+            log.warn("Can't update notification preferences for user [{}] because email is missing.", userId);
+            return;
+        }
+
+        UpsertNotificationPreference notificationPreference = UpsertNotificationPreference.builder()
+                .userId(userId)
+                .notificationEnabled(enabled)
+                .contactInfo(email)
+                .type("EMAIL")
+                .build();
+
+        try {
+            ResponseEntity<Void> httpResponse =
+                    notificationClient.upsertNotificationPreference(notificationPreference);
+
+            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
+                log.warn("Notification preference could not be saved for user [{}].", userId);
+            }
+
+        } catch (Exception e) {
+            log.warn("Can't update notification preferences for user [{}].", userId, e);
+        }
     }
+
 
 
 }

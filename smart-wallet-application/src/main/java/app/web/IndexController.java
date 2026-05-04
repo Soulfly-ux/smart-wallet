@@ -155,7 +155,7 @@ public class IndexController {
 //   @ExceptionHandler(UserNameAlreadyExist.class)
 //    public ModelAndView handleUserNameAlreadyExist() {
 //        // Този метод ще се задейства само и единствено ако заявката е минала през този контролер
-//       // По- използваният начин е да имаме GlobalExceptionHanldler клас, а не да правим във всеки контролер, така не ги роварим с излишна логика
+//       // По- използваният начин е да имаме GlobalExceptionHanldler клас, а не да правим във всеки контролер, така не ги тооварим с излишна логика и избягваме повтаряемост на код
 //       // Tози метод го слагаме там и така ще действа за всички контролери, не само за този
 //        ModelAndView modelAndView = new ModelAndView();
 //        modelAndView.setViewName("not-found");

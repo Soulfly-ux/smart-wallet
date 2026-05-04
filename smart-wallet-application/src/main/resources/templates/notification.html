@@ -186,7 +186,7 @@
 
             <p>Change State:</p>
             <div class="allowed-notification-actions">
-                <form th:action="@{'/notifications/user-preference?enabled=false'}" th:method="PUT" th:if="${notificationPreferences.enabled}">
+                <form th:action="@{'/notifications/user-preference?enabled=false'}" th:method="POST" th:if="${notificationPreferences.enabled}">
                 <button class="profile-actions-button disable-notifications"  >
                         <p>Disable Notifications</p>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,7 +195,7 @@
                         </svg>
                     </button>
                 </form>
-                <form th:action="@{'/notifications/user-preference?enabled=true'}" th:method="PUT" th:unless="${notificationPreferences.enabled}">
+                <form th:action="@{'/notifications/user-preference?enabled=true'}" th:method="POST" th:unless="${notificationPreferences.enabled}">
                 <button class="profile-actions-button enable-notifications">
                         <p>Enable Notifications</p>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

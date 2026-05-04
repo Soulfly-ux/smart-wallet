@@ -9,10 +9,7 @@ import app.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -54,11 +51,19 @@ public class NotificationController {
     }
 
 
-    @PutMapping("/user-preference")
-    public String updateUserPreference(@RequestParam(name = "enabled") boolean enabled, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    @PostMapping("/user-preference")
+    public String updateUserPreference(@RequestParam(name = "enabled") boolean enabled,
+                                       @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
-        notificationService.updateNotificationPreference(authenticationDetails.getUserId(),enabled);
+        User user = userService.getUserById(authenticationDetails.getUserId());
+
+        notificationService.updateNotificationPreference(
+                user.getId(),
+                enabled,
+                user.getEmail()
+        );
 
         return "redirect:/notifications";
     }
+
 }
