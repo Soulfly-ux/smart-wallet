@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/notifications")
@@ -62,6 +63,16 @@ public class NotificationController {
                 enabled,
                 user.getEmail()
         );
+
+        return "redirect:/notifications";
+    }
+
+    @PostMapping("/clear-history")
+    public String deleteNotificationHistory(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+
+        UUID userId = authenticationDetails.getUserId();
+
+        notificationService.clearHistory(userId);
 
         return "redirect:/notifications";
     }

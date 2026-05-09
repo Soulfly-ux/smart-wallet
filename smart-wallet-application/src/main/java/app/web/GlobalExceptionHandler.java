@@ -1,5 +1,6 @@
 package app.web;
 
+import app.exceptions.NotificationServiceFeignCallException;
 import app.exceptions.UserNameAlreadyExist;
 import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.TypeMismatchException;
@@ -57,8 +58,19 @@ public class GlobalExceptionHandler {
 
     }
 
-    // Generic exception handler- за всички exceptions
-    @ExceptionHandler
+    @ExceptionHandler(NotificationServiceFeignCallException.class)
+    public String handleNotificationFeignCallException(RedirectAttributes redirectAttributes, NoResourceFoundException exception) {
+
+        String message = exception.getMessage();// Дай ми съобщението от моя exception
+        redirectAttributes.addFlashAttribute("clearHistoryMessage", message);
+        return "redirect/notifications";
+    }
+
+    // АКО ТУК НЕ СМЕ ОБРАБОТИЛИ(така както горните) НЯКОЯ НАША CUSTOM ГРЕШКА ЩЕ СЕ ЗАДЕЙСТАВА НЯКОЯ ОТ Generic exception handler
+
+    // Generic exception handler- за всички exceptions, които не са уловени погоре
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
     public ModelAndView handleAnyException(Exception exception) {
         //обработва всеки Exception, който не сме обработили отделно
         ModelAndView modelAndView = new ModelAndView();

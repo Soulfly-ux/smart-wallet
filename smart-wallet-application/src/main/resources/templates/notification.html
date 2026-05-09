@@ -209,7 +209,7 @@
 
             <p>General Actions:</p>
             <div class="allowed-notification-actions">
-                <form th:action="@{/notifications}" th:method="DELETE">
+                <form th:action="@{/notifications/clear-history}" th:method="POST">
                     <button class="profile-actions-button">
                         <p>Clear History</p>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -218,7 +218,7 @@
                         </svg>
                     </button>
                 </form>
-                <form th:action="@{/notifications}" th:method="PUT">
+                <form th:action="@{/notifications/retry}" th:method="POST">
                     <button class="profile-actions-button">
                         <p>Retry Failed</p>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -229,7 +229,7 @@
                 </form>
             </div>
 
-            <p class="alert-warning" th:text="${notificationHistory}"></p>
+            <p class="alert-warning" th:text="${clearHistoryMessage}"></p>
             <p class="small-informative-text-bottom">Any action that you take will affect the notification mechanism for your account!</p>
         </div>
 

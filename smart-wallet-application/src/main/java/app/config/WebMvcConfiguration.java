@@ -51,7 +51,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         // МНОГО ВАЖНО: SS ще търси на тази страница username и password
                         // ако нашата логика е да се логваме с email и password например,
                         // тогава трябва изрично да му кажем .usernameParameter("email") и .passwordParameter("password")
-                        .defaultSuccessUrl("/home")// на кой endpoint ще се връща след успешна логин
+                        .defaultSuccessUrl("/home", true)// на кой endpoint ще се връща след успешна логин
                         .failureUrl("/login?error")// на кой endpoint ще се връща след неуспешна логин
                         .permitAll()// всеки да може да използва логин страницата
                 )

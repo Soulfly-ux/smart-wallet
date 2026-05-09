@@ -5,8 +5,10 @@ import app.email.client.dto.NotificationPreferenceResponse;
 import app.email.client.dto.NotificationRequest;
 import app.email.client.dto.NotificationResponse;
 import app.email.client.dto.UpsertNotificationPreference;
+import app.exceptions.NotificationServiceFeignCallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,11 @@ import java.util.UUID;
 public class NotificationService {
 
     private final NotificationClient notificationClient;
+
+    @Value("${notification-svc.failure-message.clear-history}")// този message сме го сложили в application properties,
+                                                               // изнасяме тази променлива  в application properties, когато например искаме съобщенията
+                                                               // в различни региони на света да са на съответния език
+    private String clearHistoryFailedMessage;
 
     @Autowired
     public NotificationService(NotificationClient notificationClient) {
@@ -63,6 +70,7 @@ public class NotificationService {
 
         } catch (Exception e) {
             log.warn("Notification preference for user id [{}] was not found. Returning default preferences.", userId);
+
         }
 
         return NotificationPreferenceResponse.builder()
@@ -135,5 +143,14 @@ public class NotificationService {
     }
 
 
+    public void clearHistory(UUID userId) {
 
+        try {
+            notificationClient.clearHistory(userId);
+        } catch (Exception e) {
+            log.error("Unable to call notification-svc for clear history.");
+            throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
+        }
+
+    }
 }
