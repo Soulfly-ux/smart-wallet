@@ -59,11 +59,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotificationServiceFeignCallException.class)
-    public String handleNotificationFeignCallException(RedirectAttributes redirectAttributes, NoResourceFoundException exception) {
+    public String handleNotificationFeignCallException(RedirectAttributes redirectAttributes, NotificationServiceFeignCallException exception) {
 
         String message = exception.getMessage();// Дай ми съобщението от моя exception
         redirectAttributes.addFlashAttribute("clearHistoryMessage", message);
-        return "redirect/notifications";
+        return "redirect:/notifications";
     }
 
     // АКО ТУК НЕ СМЕ ОБРАБОТИЛИ(така както горните) НЯКОЯ НАША CUSTOM ГРЕШКА ЩЕ СЕ ЗАДЕЙСТАВА НЯКОЯ ОТ Generic exception handler

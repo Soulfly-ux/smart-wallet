@@ -26,6 +26,9 @@ public class NotificationService {
                                                                // в различни региони на света да са на съответния език
     private String clearHistoryFailedMessage;
 
+    @Value("${notification-svc.failure-message.retry-notifications}")
+    private String retryNotificationsFailedMessage;
+
     @Autowired
     public NotificationService(NotificationClient notificationClient) {
         this.notificationClient = notificationClient;
@@ -152,5 +155,16 @@ public class NotificationService {
             throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
         }
 
+    }
+
+    public void retryFailedNotifications(UUID userId) {
+
+       try {
+          notificationClient.retryFailedNotifications(userId) ;
+       }catch (Exception e) {
+           log.error("Unable to call notification-svc for retry notifications.");
+           throw new NotificationServiceFeignCallException(retryNotificationsFailedMessage);
+
+       }
     }
 }

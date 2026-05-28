@@ -77,4 +77,13 @@ public class NotificationController {
         return "redirect:/notifications";
     }
 
+    @PostMapping("/retry")
+    public String retryFailedNotifications(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+
+        UUID userId = authenticationDetails.getUserId();
+        notificationService.retryFailedNotifications(userId);
+
+        return "redirect:/notifications";
+    }
+
 }

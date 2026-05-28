@@ -46,6 +46,11 @@ public interface NotificationClient {
      @DeleteMapping
     ResponseEntity<Void> clearHistory(@RequestParam(name = "userId") UUID userId);
 
+     @PutMapping("/retry")
+    ResponseEntity<Void> retryFailedNotifications(@RequestParam(name = "userId") UUID userId);
+
+
+
 
 
 }

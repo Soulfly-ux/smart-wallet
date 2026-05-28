@@ -69,8 +69,9 @@ public class UserService implements UserDetailsService {
 //
 //        return user;
 //    }
-
-
+    // Register
+    // Test 1: When username -> exception is thrown
+    // Test 2: Happy path
     @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public User register(RegisterRequest registerRequest) {
@@ -118,7 +119,7 @@ public class UserService implements UserDetailsService {
 
 
 
-    public User initializeUser(RegisterRequest registerRequest) {
+    private User initializeUser(RegisterRequest registerRequest) {
         // връща нов билднат потребител.билдваме това, което ще ни трябва при създаването на потребител, после можем да го променяме
 
         // трябва да енкриптнем паролата, за да не бъде видима в базата данни
@@ -133,6 +134,9 @@ public class UserService implements UserDetailsService {
                 .updatedOn(LocalDateTime.now())
                 .build();
     }
+
+    // Test: When there is no user in DB (repo returns Optional.empty()) -> then expect an exception
+    // of type DomainException
     @CacheEvict(value = "users", allEntries = true)
     public void editUserDetails(UUID id, EditProfileRequest editProfileRequest) {
         User userById = getUserById(id);
@@ -214,6 +218,10 @@ public class UserService implements UserDetailsService {
     }
 
     // Всеки път когато потребител се логва спринг секюрити ще извиква този метод за да вземе детайлите за потребителя с този username
+
+
+    // Test 1: When user exist- then return  AuthenticationDetails
+    // Test 1: When user does not exist- then throw new DomainException
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // тук е логиката за логване на потребител.Нашата вече не ни трябва.Логването вече е в ръцете на spring security
