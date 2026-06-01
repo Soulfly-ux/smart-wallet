@@ -16,7 +16,11 @@ import app.wallet.service.WalletService;
 import app.web.dto.EditProfileRequest;
 import app.web.dto.RegisterRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import java.util.stream.Stream;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +46,7 @@ import static org.mockito.Mockito.*;
 
 
 // 1,2
+
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUnitTest {
 
@@ -64,6 +69,41 @@ public class UserServiceUnitTest {
     // 3, 5
     @InjectMocks // Анотация за класа който ще тествам
     private UserService userService;
+
+
+
+
+
+    // Пример за параметаризиран тест
+    @ParameterizedTest
+    @MethodSource("userRolesArguments")
+    void whenChangedUserRole_thenCorrectRoleIsAssigned(Role currrentUserRole, Role expectedUserRole) {
+        // Given
+        UUID userId = UUID.randomUUID();
+        User user = User.builder()
+                .id(userId)
+                .role(currrentUserRole)
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+
+        // When
+        userService.switchRole(userId);
+
+
+        // Then
+        assertEquals(expectedUserRole, user.getRole());
+    }
+
+    // Този метод е също за параметаризирания тест
+    private static Stream<Arguments> userRolesArguments() {
+
+        return Stream.of(
+                Arguments.of(Role.USER, Role.ADMIN), // Ако сегашната роля е user очаквам да стане admin
+                Arguments.of(Role.ADMIN,Role.USER) // Един път теста ще мине с пъвия от тези аргументи и след това с втория
+        );
+    }
 
 
     // Тест на гетър, който сме си направили

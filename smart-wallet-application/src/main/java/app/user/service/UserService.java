@@ -203,6 +203,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(userById);
     }
 
+    // If user is ADMIN -> USER
+    // If user is USER -> ADMIN
     @CacheEvict(value = "users", allEntries = true)
     public void switchRole(UUID id) {
 
